@@ -1,0 +1,491 @@
+{%extends 'index.html'%} {%block content%}
+
+<div class="portlet box green">
+
+  <!-- Begin caption title -->
+  <div class="portlet-title">
+    <div class="caption">
+      <i class="fa fa-globe"></i>{{form_title}}
+    </div>
+  </div>
+  <!-- End Caption Title -->
+
+  <!-- Begin Instrument Body -->
+  <div class="portlet-body">
+
+      <!-- Begin Edit Project -->
+    <div class="table-toolbar">
+    {%if post_to_DB == False %}
+    <div class="portlet">
+        <div class="portlet-title">
+          <div class="caption">
+            <i class="fa fa-gift"></i>Project
+          </div>
+          {%if page_title == 'Edit Booked Instruments'%}
+          <div class="tools">
+            <form class="form" method="POST"> {%csrf_token%}
+              <label>Select Project: </label>
+               <select class="form-control input-large select2me select2-offscreen"
+                data-placeholder="Select..." 
+                tabindex="-1" 
+                title=""
+                name="selected_project">
+                  <option value=""></option>
+                  {%for el in all_projects%}
+                  <option value="{{el.project_id}}" selected="{{el.project_id}}">
+                    {{el.project_id}}
+                  </option>
+                  {%endfor%}
+                </select>
+                <button type="submit" class="btn btn-circle green p-l-5">
+                  <i class="glyphicon glyphicon-search"></i>
+                  View
+                </button>
+            </form>
+             
+          </div>
+          {%endif%}
+        </div>
+        <div class="portlet-body" style="display: block;">
+          
+          <div class="row">
+              <div class="col-md-6">
+                <label class="form-control">Project ID:
+                  <span class="label label-success">
+                    {{current_project.project_id|upper}}
+                  </span>
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-control">Project Manager:
+                  <span class="label label-success">
+                    {{current_project.project_manag|upper}}
+                  </span>
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-control">Leaving Date:
+                  <span class="label label-success">
+                    {{current_project.expected_leaving_date|upper}}
+                  </span>
+                </label>
+              </div>
+              <div class="col-md-6">
+                <label class="form-control">Return Date:
+                  <span class="label label-success">
+                    {{current_project.expected_return_date|upper}}
+                  </span>
+                </label>
+              </div>
+            </div>
+        </div>
+    </div>
+    {%endif%}
+    {% if post_to_DB == True %}
+    <div id="prefix_822105849597" 
+class="Metronic-alerts alert alert-success fade in">
+<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+</button>
+{{sucess_message}}
+{%if page_title == 'Book Instruments'%}
+<span>click to <a href="/edit_bookings">view/edit</a></span>
+{%endif%}
+</div>
+{%endif%}
+      <hr>
+    </div>
+    <!-- End Edit Project -->
+
+
+    <!-- Begin Instrument List  -->
+      <div  class="dataTables_wrapper no-footer">
+        <!-- Begin Search and Filter -->
+        <div class="row">
+          <div class="col-md-3 col-sm-12">
+            <div class="dataTables_length" id="sample_1_length">
+              <label>
+                <select name="sample_1_length" aria-controls="sample_1" 
+                class="form-control input-xsmall input-inline">
+                  <option value="5">5</option>
+                  <option value="15">15</option>
+                  <option value="20">20</option>
+                  <option value="-1">All</option>
+                </select> records</label>
+            </div>
+          </div>
+          <div class="col-md-6">
+
+          </div>
+          <!-- Begin Instrument Search -->
+          <div class="col-md-3 col-sm-12 form">
+                <div class="actions">
+                    <div class="portlet-input input-inline input">
+                      <form method="GET" action="">
+                      <div class="input-icon right">
+                        <i class="icon-magnifier"></i>
+                        <input type="text" class="form-control input-circle"
+                         placeholder="search..." name='q' value='{{request.GET.q}}'>
+                      </div>
+                    </form>
+                    </div>
+                  </div>
+          </div>
+          <!-- End Instrument Search -->
+        </div>
+        <!-- End Search and Filter -->
+
+        <!-- Begin Instrument Form -->
+        <form method="POST" action="" class="form">{% csrf_token %}
+        <div class="table-scrollable">
+          <table 
+          class="table table-striped table-bordered table-hover 
+          dataTable flip-content no-footer"
+           id="sample_1" role="grid"
+            aria-describedby="sample_1_info">
+            <thead>
+              <tr role="row">
+                <th class="table-checkbox sorting_disabled" rowspan="1" 
+                colspan="1" aria-label="" style="width: 24px;">
+                  Select
+                </th>
+                <th class="sorting_asc" tabindex="0" aria-controls="sample_1" 
+                rowspan="1" colspan="1" aria-sort="ascending" aria-label="
+           Username
+        : activate to sort column ascending" style="width: 157px;">
+                  Instrument ID
+                </th>
+                <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="
+           Email
+        " style="width: 264px;">
+                  Model
+                </th>
+                <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="
+           Points
+        " style="width: 99px;">
+                  Manufacturer
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="sample_1" 
+                rowspan="1" colspan="1" aria-label="
+           Joined
+        : activate to sort column ascending" style="width: 145px;">
+                  Certificate Number
+                </th>
+                <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="
+           Status
+        " style="width: 156px;">
+                  Calibration Date
+                </th>
+                <th class="sorting_disabled" rowspan="1" colspan="1" 
+                aria-label="Status" style="width: 156px;">
+                  Calibration Expiry Date
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for el in instrument %}
+              <tr class="gradeX odd" role="row">
+                <td>
+                  <div class="">
+                    <span class="">
+                      <input type="checkbox" class="checkboxes" 
+                      name="booked" value= {{el.instrument_id}} id= {{el.id}}>
+                    </span>
+                  </div>
+                </td>
+                <td class="sorting_1">
+                  
+                     <a   data-toggle="modal" href="#draggable" type="submit">
+                        {{el.instrument_id}}
+                    </a>
+
+                   
+                </td>
+                <td>
+                  {{el.model}}
+                </td>
+                <td>
+                  {{el.manufacturer}}
+                </td>
+                <td class="center">
+                  {{el.certificate_number}}
+                </td>
+                <td>
+                  {{el.calibration_date}}
+                </td>
+                <td>
+                  <span class="label label-sm label-success">
+                    {{el.calibration_expiry_date}}</span>
+                </td>
+              </tr>
+              {%endfor%}
+            </tbody>
+          </table>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 col-sm-12">
+            <div class="dataTables_info" 
+            id="sample_1_info" role="status" 
+            aria-live="polite">Showing 1 to 5 of 25 entries</div>
+          </div>
+          <div class="col-md-3"></div>
+          <div class="col-md-6 col-sm-12">
+            <div class="dataTables_paginate paging_bootstrap_full_number"
+             id="sample_1_paginate">
+              <ul class="pagination" style="visibility: visible;">
+                <li class="prev disabled">
+                  <a href="#" title="First">
+                    <i class="fa fa-angle-double-left"></i>
+                  </a>
+                </li>
+                <li class="prev disabled">
+                  <a href="#" title="Prev">
+                    <i class="fa fa-angle-left"></i>
+                  </a>
+                </li>
+                <li class="active">
+                  <a href="#">1</a>
+                </li>
+                <li>
+                  <a href="#">2</a>
+                </li>
+                <li>
+                  <a href="#">3</a>
+                </li>
+                <li>
+                  <a href="#">4</a>
+                </li>
+                <li>
+                  <a href="#">5</a>
+                </li>
+                <li class="next">
+                  <a href="#" title="Next">
+                    <i class="fa fa-angle-right"></i>
+                  </a>
+                </li>
+                <li class="next">
+                  <a href="#" title="Last">
+                    <i class="fa fa-angle-double-right"></i>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <br>
+                <div class="row">
+                  <div class="col-md-4 col-sm-4"></div>
+                  <div class="col-md-4 col-sm-4">
+                      {%if page_title == 'Book Instruments' %}
+                    <button type="submit" class="btn btn-circle green">
+                        <i class="fa fa-check"></i>
+                      submit
+                    </button>
+                      {%endif%}
+
+                      {%if page_title == 'Edit Booked Instruments' %}
+                      <button type="submit" class="btn btn-circle red">
+                          <i class="fa fa-trash-o"></i>
+                          Delete
+                        </button>
+                        <a type="submit" class="btn btn-circle blue" 
+                        href="/book_instruments">
+                        <i class="fa fa-plus"></i>
+                            New  
+                        </a>
+                      {%endif%}
+                  </div>
+                  <div class="clearfix"></div>
+                  <div class="col-md-4 col-sm-4"></div>
+                </div>
+        </form>
+        <!-- End Instrument Form -->
+
+      </div>
+    <!-- End Instrument Table  -->
+
+  </div>
+  <!-- End Instruments  Body -->
+
+</div>
+
+<!-- Instrument Details Modal -->
+<div 
+class="modal fade draggable-modal ui-draggable in" 
+id="draggable" 
+tabindex="-1" 
+role="basic"  
+  aria-hidden="true">
+  <div class="modal-backdrop fade in" 
+  style="height: 601px;"></div>
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header ui-draggable-handle">
+                      <button type="button" class="close" 
+                      data-dismiss="modal" aria-hidden="true"></button>
+											<h4 class="modal-title">Instrument Details</h4>
+										</div>
+										<div class="modal-body">
+                        <div class="table-scrollable">
+                            <table 
+                            class="table table-striped table-bordered table-hover 
+                            dataTable flip-content no-footer"
+                             id="sample_1" role="grid"
+                              aria-describedby="sample_1_info">
+                              <thead>
+                              <tr role="row">
+                                <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="Status" style="width: 156px;">
+                                Attributes
+                                </th>
+                                <th class="sorting_disabled" rowspan="1" colspan="1" 
+                                aria-label="Status" style="width: 156px;">
+                                Values
+                              </th>
+                              </tr>
+                              </thead>
+                              <tbody>
+                              <tr class="gradeX odd" role="row">
+                                <td>
+                              Instrument ID
+                                </td>
+                                <td class="sorting_1">
+                                 
+                                </td>
+                              </tr>
+                              <tr class="gradeX odd" role="row">
+                                  <td>
+                                Item ID
+                                  </td>
+                                  <td class="sorting_1">
+                                   
+                                  </td>
+                                </tr>
+                                <tr class="gradeX odd" role="row">
+                                    <td>
+                                  Description
+                                    </td>
+                                    <td class="sorting_1">
+                                     
+                                    </td>
+                                  </tr>
+                                  <tr class="gradeX odd" role="row">
+                                      <td>
+                                    Manufacturer
+                                      </td>
+                                      <td class="sorting_1">
+                                       
+                                      </td>
+                                    </tr>
+                                    <tr class="gradeX odd" role="row">
+                                        <td>
+                                      Model
+                                        </td>
+                                        <td class="sorting_1">
+                                         
+                                        </td>
+                                      </tr>
+                                      <tr class="gradeX odd" role="row">
+                                          <td>
+                                        Serial Number
+                                          </td>
+                                          <td class="sorting_1">
+                                           
+                                          </td>
+                                        </tr>
+                                        <tr class="gradeX odd" role="row">
+                                            <td>
+                                          Certificate Number
+                                            </td>
+                                            <td class="sorting_1">
+                                             
+                                            </td>
+                                          </tr>
+                                          <tr class="gradeX odd" role="row">
+                                              <td>
+                                            Minimum Operating Range
+                                              </td>
+                                              <td class="sorting_1">
+                                               
+                                              </td>
+                                            </tr>
+                                            <tr class="gradeX odd" role="row">
+                                                <td>
+                                              Maximum Operating Range
+                                                </td>
+                                                <td class="sorting_1">
+                                                 
+                                                </td>
+                                              </tr>
+                                              <tr class="gradeX odd" role="row">
+                                                  <td>
+                                                Tolerance
+                                                  </td>
+                                                  <td class="sorting_1">
+                                                   
+                                                  </td>
+                                                </tr>
+                                                <tr class="gradeX odd" role="row">
+                                                    <td>
+                                                  Calibration Date
+                                                    </td>
+                                                    <td class="sorting_1">
+                                                     
+                                                    </td>
+                                                  </tr>
+                                                  <tr class="gradeX odd" role="row">
+                                                      <td>
+                                                    Calibration Expiry Date
+                                                      </td>
+                                                      <td class="sorting_1">
+                                                       
+                                                      </td>
+                                                    </tr>
+                                                    <tr class="gradeX odd" role="row">
+                                                        <td>
+                                                      Available Date
+                                                        </td>
+                                                        <td class="sorting_1">
+                                                         
+                                                        </td>
+                                                      </tr>
+                                                      <tr class="gradeX odd" role="row">
+                                                          <td>
+                                                        Location
+                                                          </td>
+                                                          <td class="sorting_1">
+                                                           
+                                                          </td>
+                                                        </tr>
+                                                        <tr class="gradeX odd" role="row">
+                                                            <td>
+                                                          Value
+                                                            </td>
+                                                            <td class="sorting_1">
+                                                             
+                                                            </td>
+                                                          </tr>
+                                                          <tr class="gradeX odd" role="row">
+                                                              <td>
+                                                            Calibration Cost
+                                                              </td>
+                                                              <td class="sorting_1">
+                                                               
+                                                              </td>
+                                                            </tr>
+                              </tbody>
+                            </table>
+                            </div>										</div>
+										<div class="modal-footer">
+                      <button type="button" class="btn default" 
+                      data-dismiss="modal">Close</button>
+											<button type="button" class="btn blue">Save changes</button>
+										</div>
+									</div>
+									<!-- /.modal-content -->
+								</div>
+								<!-- /.modal-dialog -->
+</div>
+								
+{%endblock content%}
