@@ -1,2 +1,2 @@
 # Warehouse-Manager
-Instrument warehouse management system
+Warehouse management system
